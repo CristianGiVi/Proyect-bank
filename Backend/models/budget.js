@@ -19,12 +19,13 @@ const Budget = Db.define('budget',
         balance: {
             type: Sequelize.INTEGER(11)
         },
-        frecuency: {
-            type: Sequelize.STRING(100)
+        startDate: {
+            type: Sequelize.DATE,
+            allowNull: false,
+            defaultValue: Sequelize.NOW // Fecha de creación por defecto
         },
-        date: {
-            type: Sequelize.DATE, // Define la columna para la fecha de creación
-            allowNull: false // Indica que la columna no puede ser nula
+        endDate: {
+            type: Sequelize.DATE
         },
         slug: {
             type: Sequelize.STRING(100)
@@ -33,7 +34,7 @@ const Budget = Db.define('budget',
         hooks: {
             beforeCreate(budget) {
                 const nameSlug = Slug(budget.name).toLowerCase(); // Genera el slug del nombre
-                const dateSlug = budget.date.toISOString().split('T')[0].replace(/-/g, ''); // Convierte la fecha en formato YYYYMMDD
+                const dateSlug = budget.startDate.toISOString().split('T')[0].replace(/-/g, ''); // Convierte la fecha en formato YYYYMMDD
 
                 budget.slug = `${nameSlug}-${dateSlug}`; // Concatena el slug del nombre y el slug de la fecha
             }

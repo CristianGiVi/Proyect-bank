@@ -83,7 +83,7 @@ exports.post = async (request, response)=>{
         });
     
         if(!status){
-            return response.status(400).json({mensaje: "No existe un estado con esta id"})           
+            return response.status(404).json({mensaje: "No existe un estado con esta id"})           
         }
 
         let save = await Profile.create(
@@ -95,13 +95,13 @@ exports.post = async (request, response)=>{
         );
 
         if(!save){
-            return response.status(400).json({mensaje: "Ocurrio un error al guardar"})
+            return response.status(500).json({mensaje: "Ocurrio un error al guardar"})
         }else{
             return response.status(201).json({mensaje: "Se ha creado el registro exitosamente"});
         }
             
     } catch (error) {
-        return response.status(400).json({mensaje: error.mensaje})              
+        return response.status(500).json({mensaje: error.mensaje})              
     }
 }
 
@@ -137,7 +137,7 @@ exports.put = async (request, response)=>{
         });  
             
         if(!profile){
-            return response.status(400).json({mensaje: "No se encuentra un perfil con esta id"})           
+            return response.status(404).json({mensaje: "No se encuentra un perfil con esta id"})           
         }
 
         await Profile.update(
@@ -152,10 +152,10 @@ exports.put = async (request, response)=>{
             }
         );           
 
-            return response.status(200).json({mensaje: "Se ha modificado el registro exitosamente"});
+            return response.status(201).json({mensaje: "Se ha modificado el registro exitosamente"});
 
         } catch (error) {
-            return response.status(400).json({mensaje: error.mensaje})                          
+            return response.status(500).json({mensaje: error.mensaje})                          
         }
 }
 
@@ -172,7 +172,7 @@ exports.delete = async (request, response)=>{
         });   
                     
         if(!profile){
-            return response.status(400).json({mensaje: "No se encuentra un perfil con esta id"})           
+            return response.status(404).json({mensaje: "No se encuentra un perfil con esta id"})           
         }
 
         await Profile.destroy({
@@ -184,7 +184,7 @@ exports.delete = async (request, response)=>{
         return response.status(200).json({mensaje: "Se ha eliminado el registro exitosamente"});
 
     } catch (error) {
-            return response.status(400).json({mensaje: error.mensaje})         
+            return response.status(500).json({mensaje: error.mensaje})         
     }
 }
 

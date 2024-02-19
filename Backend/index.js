@@ -16,6 +16,7 @@ require('dotenv').config();
 app.use(BodyParser.urlencoded({ extended: false }));
 app.use(BodyParser.json());
 
+
 // Usamos las rutas definidas en el archivo de rutas 'routes.js'
 app.use("/", require("./routes/routes"));
 
