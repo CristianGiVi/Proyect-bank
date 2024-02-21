@@ -6,6 +6,20 @@ const Account = require("../models/account");
 const Slug = require("slug");
 const Joi = require("@hapi/joi");
 
+
+/**
+ * @swagger
+ * /proyect/account:
+ *  get:
+ *    summary: Obtener todas las cuentas
+ *    description: Se muestran todas las cuentas de los perfiles
+ *    responses:
+ *      '200':
+ *        description: Solicitud realizada con exito
+ *      '500':
+ *        description: Sucedio un error interno al mostrar la solicitud
+ */
+
 exports.getAll = async (request, response) => {
     try {
         let accounts = await Account.findAll({
@@ -19,6 +33,31 @@ exports.getAll = async (request, response) => {
         return response.status(500)
     }
 }
+
+/**
+ * @swagger
+ * /proyect/account/{id}:
+ *  get:
+ *    summary: Obtener una cuenta por ID
+ *    description: Se ingresa la id de una de las cuentas existentes y se muestran sus detalles
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: int
+ *        required: true
+ *    responses:
+ *      '200':
+ *        description: Solicitud realizada con exito
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *      '404':
+ *         description: No se encontró un recurso asociado
+ *      '500':
+ *         description: Error interno del servidor
+*/
 
 exports.getOne = async (request, response)=>{
     const {id} = request.params;
@@ -42,6 +81,44 @@ exports.getOne = async (request, response)=>{
     }
 }
 
+
+
+/**
+ * @swagger
+ * /proyect/account/:
+ *   post:
+ *     summary: Agregar una nueva cuenta
+ *     description: Agregar una nueva cuenta
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             name:
+ *               type: string
+ *             balance:
+ *               type: integer
+ *             state_id:
+ *               type: integer
+ *             profile_id:
+ *               type: integer
+ *             type_id:
+ *               type: integer
+ *                
+ *     responses:
+ *       '201':
+ *         description: Se ha creado el registro exitosamente
+ *       '400':
+ *         description: Ocurrió un error al guardar o ya existe el documento
+ *       '404':
+ *         description: No se encontró un recurso asociado
+ *       '500':
+ *         description: Error interno del servidor
+ */
 
 exports.post = async (request, response)=>{ 
 
@@ -137,6 +214,50 @@ exports.post = async (request, response)=>{
         return response.status(500).json({mensaje: error.mensaje})              
     }
 }
+
+
+
+/**
+ * @swagger
+ * /proyect/account/{id}:
+ *   put:
+ *     summary: Actualizar una cuenta existente
+ *     description: Actualiza una cuenta existente con los datos proporcionados.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID de la cuenta a actualizar
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               balance:
+ *                 type: integer
+ *               state_id:
+ *                 type: integer
+ *               profile_id:
+ *                 type: integer
+ *               type_id:
+ *                 type: integer
+ *     responses:
+ *       '201':
+ *         description: Se ha modificado el registro exitosamente
+ *       '400':
+ *         description: Ocurrió un error de validación en los datos proporcionados
+ *       '404':
+ *         description: No se encontró una cuenta con la ID proporcionada
+ *       '500':
+ *         description: Error interno del servidor
+ */
+
 
 
 exports.put = async (request, response)=>{

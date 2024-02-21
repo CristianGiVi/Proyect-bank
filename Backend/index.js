@@ -5,6 +5,11 @@ const Mysql = require('./database/mysqldb');
 
 const BodyParser = require("body-parser")
 
+const SwaggerJsDoc = require('swagger-jsdoc');
+const SwaggerUi = require('swagger-ui-express');
+const Cors = require('cors');
+
+
 
 // Creamos una nueva instancia de la aplicación Express
 const app = Express();
@@ -16,6 +21,8 @@ require('dotenv').config();
 app.use(BodyParser.urlencoded({ extended: false }));
 app.use(BodyParser.json());
 
+// Agregar el middleware de CORS a tu aplicación
+app.use(Cors());
 
 // Usamos las rutas definidas en el archivo de rutas 'routes.js'
 app.use("/", require("./routes/routes"));
@@ -37,7 +44,26 @@ require("./models/account");
 require("./models/category");
 require("./models/transaction");
 
-
+// Config swagger
+const swaggerOptions = {
+    swaggerDefinition: {
+      info: {
+        title: 'API proyecto fullStack',
+        description: '',
+        contact: {
+          name: 'Cristian Giraldo',
+        },
+        servers: [`http://localhost:${process.env.PORT}`],
+      },
+    },
+    apis: [
+      './controllers/*.js'
+    ],
+  };
+  
+const swaggerDocs = SwaggerJsDoc(swaggerOptions);
+app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(swaggerDocs));
+// -----------
 
 // Iniciamos el servidor Express y lo configuramos para que escuche en el puerto especificado por la variable de entorno 'PORT'
 app.listen(process.env.PORT, () => {

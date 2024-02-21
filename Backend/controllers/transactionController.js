@@ -7,6 +7,21 @@ const Slug = require("slug");
 const Joi = require("@hapi/joi");
 const Movement = require("../models/movement");
 
+
+/**
+ * @swagger
+ * /proyect/transaction/:
+ *    get:
+ *     summary: Obtener todos las transacciones
+ *     description: Obtiene una lista de todos las transacciones.
+ *    responses:
+ *      '200':
+ *        description: Solicitud realizada con exito
+ *      '500':
+ *        description: Sucedio un error interno al mostrar la solicitud
+ */
+
+
 exports.getAll = async (request, response) => {
     try {
         let transactions = await Transaction.findAll({
@@ -21,6 +36,32 @@ exports.getAll = async (request, response) => {
     }
 }
 
+
+/**
+ * @swagger
+ * /proyect/transaction/{id}:
+ *    get:
+ *     summary: Obtener una transaccion por ID
+ *     description: Obtiene una transaccion específica basada en su ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID de la transaccion a obtener
+ *         schema:
+ *           type: integer
+ *    responses:
+ *      '200':
+ *        description: Solicitud realizada con exito
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *      '404':
+ *         description: No se encontró un recurso asociado
+ *      '500':
+ *         description: Error interno del servidor
+ */
 
 exports.getOne = async (request, response)=>{
     const {id} = request.params;
@@ -43,6 +84,44 @@ exports.getOne = async (request, response)=>{
         return response.status(500)      
     }
 }
+
+
+/**
+ * @swagger
+ * /proyect/transaction:
+ *   post:
+ *     summary: Agregar una nueva transacción
+ *     description: Crea una nueva transacción con la información proporcionada.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               amount:
+ *                 type: integer
+ *               sender_id:
+ *                 type: integer
+ *               recipient_id:
+ *                 type: integer
+ *               budget_id:
+ *                 type: integer
+ *               category_id:
+ *                 type: integer
+ *               movement_id:
+ *                 type: integer
+ *     responses:
+ *       '201':
+ *         description: Se ha creado la transacción exitosamente
+ *       '400':
+ *         description: Bad Request. La solicitud no es válida o está incompleta.
+ *       '404':
+ *         description: No se encontró el recurso solicitado.
+ *       '500':
+ *         description: Error interno del servidor.
+ */
+
 
 
 exports.post = async (request, response)=>{ 
@@ -149,6 +228,50 @@ exports.post = async (request, response)=>{
 }
 
 
+/**
+ * @swagger
+ * /proyect/transaction:
+ *   put:
+ *     summary: Actualiza una transacción existente por su ID.
+ *     description: Permite actualizar una transacción existente en la base de datos.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID de la transacción que se desea actualizar.
+ *         schema:
+ *           type: integer
+ *       - in: body
+ *         name: body
+ *         required: true
+ *         description: Datos de la transacción a actualizar.
+ *         schema:
+ *           type: object
+ *           properties:
+ *             amount:
+ *               type: integer
+ *             sender_id:
+ *               type: integer
+ *             recipient_id:
+ *               type: integer
+ *             budget_id:
+ *               type: integer
+ *             category_id:
+ *               type: integer
+ *             movement_id:
+ *               type: integer
+ *     responses:
+ *       201:
+ *         description: Se ha modificado el registro exitosamente.
+ *       400:
+ *         description: Error en la solicitud debido a datos incorrectos.
+ *       404:
+ *         description: No se encuentra una transacción con el ID especificado.
+ *       500:
+ *         description: Error interno del servidor.
+ */
+
+
 exports.put = async (request, response)=>{
     const {id} = request.params;
     const {amount, sender_id, recipient_id, budget_id, category_id, movement_id} = request.body;
@@ -209,6 +332,28 @@ exports.put = async (request, response)=>{
             return response.status(500).json({mensaje: error.mensaje})                          
         }
 }
+
+/**
+ * @swagger
+ * /proyect/transaction/{id}:
+ *   delete:
+ *     summary: Elimina una transacción por su ID.
+ *     description: Permite eliminar una transacción existente de la base de datos.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID de la transacción que se desea eliminar.
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Se ha eliminado el registro exitosamente.
+ *       404:
+ *         description: No se encuentra una transacción con el ID especificado.
+ *       500:
+ *         description: Error interno del servidor.
+ */
 
 
 exports.delete = async (request, response)=>{

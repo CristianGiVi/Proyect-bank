@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+
+  containermysql:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 'kai'
+      MYSQL_DATABASE: 'mysql'
+    volumes:
+      - db-data:/var/lib/mysql
+
+  containerbackend:
+    build: ./
+    ports: 
+      - "3000:3000"  
+    depends_on:
+      - containermysql
+
+volumes:
+  db-data:
