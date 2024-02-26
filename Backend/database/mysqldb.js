@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 
-const db = new Sequelize('mysql', 'root', 'kai', {
-    host: 'backend-containermysql-1',
+const db = new Sequelize('db_bank', 'root', '', {
+    host: 'localhost',
     dialect: 'mysql',
     port: '3306',
     logging: false,
