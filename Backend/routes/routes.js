@@ -9,6 +9,8 @@ const stateController = require('../controllers/stateController');
 const typeController = require('../controllers/typeController');
 const categoryController = require('../controllers/categoryController');
 const movementController = require('../controllers/movementController');
+const loginController = require('../controllers/loginController');
+const auth = require('../middlewares/auth');
 
 const Router = Express.Router();
 
@@ -17,16 +19,21 @@ const PAGE_ROUTE = "/proyect";
 // PROFILE
 
 const SUB_PATH_PROFILE = "profile"
-Router.get(`${PAGE_ROUTE}/${SUB_PATH_PROFILE}`, profileController.getAll);
-Router.get(`${PAGE_ROUTE}/${SUB_PATH_PROFILE}/:id`, profileController.getOne);
+Router.get(`${PAGE_ROUTE}/${SUB_PATH_PROFILE}`, [auth.authenticateToken], profileController.getAll);
+Router.get(`${PAGE_ROUTE}/${SUB_PATH_PROFILE}/:id`, [auth.authenticateToken], profileController.getOne);
 Router.post(`${PAGE_ROUTE}/${SUB_PATH_PROFILE}`, profileController.post);
 Router.put(`${PAGE_ROUTE}/${SUB_PATH_PROFILE}/:id`, profileController.put);
 Router.delete(`${PAGE_ROUTE}/${SUB_PATH_PROFILE}/:id`, profileController.delete);
 
+
+Router.get(`${PAGE_ROUTE}/${SUB_PATH_PROFILE}/accounts/:id`, [auth.authenticateToken], profileController.accounts);
+Router.get(`${PAGE_ROUTE}/${SUB_PATH_PROFILE}/totalbalance/:id`, [auth.authenticateToken], profileController.totalbalance);
+
+
 // ACCOUNT
 
 const SUB_PATH_ACCOUNT = "account"
-Router.get(`${PAGE_ROUTE}/${SUB_PATH_ACCOUNT}`, accountController.getAll);
+Router.get(`${PAGE_ROUTE}/${SUB_PATH_ACCOUNT}`, [auth.authenticateToken], accountController.getAll);
 Router.get(`${PAGE_ROUTE}/${SUB_PATH_ACCOUNT}/:id`, accountController.getOne);
 Router.post(`${PAGE_ROUTE}/${SUB_PATH_ACCOUNT}`, accountController.post);
 Router.put(`${PAGE_ROUTE}/${SUB_PATH_ACCOUNT}/:id`, accountController.put);
@@ -40,6 +47,8 @@ Router.get(`${PAGE_ROUTE}/${SUB_PATH_TRANSACTION}/:id`, transactionController.ge
 Router.post(`${PAGE_ROUTE}/${SUB_PATH_TRANSACTION}`, transactionController.post);
 Router.put(`${PAGE_ROUTE}/${SUB_PATH_TRANSACTION}/:id`, transactionController.put);
 Router.delete(`${PAGE_ROUTE}/${SUB_PATH_TRANSACTION}/:id`, transactionController.delete);
+
+Router.post(`${PAGE_ROUTE}/${SUB_PATH_TRANSACTION}/operation`, transactionController.operation);
 
 // BUDGET
 
@@ -80,7 +89,9 @@ const SUB_PATH_MOVEMENT = "movement"
 Router.get(`${PAGE_ROUTE}/${SUB_PATH_MOVEMENT}`, movementController.getAll);
 Router.post(`${PAGE_ROUTE}/${SUB_PATH_MOVEMENT}`, movementController.post);
 
+// LOGIN
 
+Router.post(`${PAGE_ROUTE}/login`, loginController.login);
 
 
 module.exports = Router;

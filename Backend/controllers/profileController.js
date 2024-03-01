@@ -1,4 +1,5 @@
 const Profile = require("../models/profile");
+const Account = require("../models/account")
 const State = require("../models/state");
 const Slug = require("slug");
 const Joi = require("@hapi/joi");
@@ -325,3 +326,73 @@ exports.delete = async (request, response)=>{
 }
 
 
+
+exports.accounts = async (request, response) => {
+    const { id } = request.params;
+
+    try {
+        let accounts = await Account.findAll({
+            where: {
+                profile_id: id
+            },
+            raw: true // Devuelve los resultados en formato JSON plano
+        });
+
+        if (accounts.length === 0) {
+            return response.status(404).json({ message: 'No se encontraron cuentas asociadas a este perfil.' });
+        }
+
+        return response.status(200).json(accounts);
+
+    } catch (error) {
+            return response.status(500).json({mensaje: error.mensaje})         
+    }
+};
+
+exports.accounts = async (request, response) => {
+    const { id } = request.params;
+
+    try {
+        let accounts = await Account.findAll({
+            where: {
+                profile_id: id
+            },
+            raw: true // Devuelve los resultados en formato JSON plano
+        });
+
+        if (accounts.length === 0) {
+            return response.status(404).json({ message: 'No se encontraron cuentas asociadas a este perfil.' });
+        }
+
+        return response.status(200).json(accounts);
+
+    } catch (error) {
+            return response.status(500).json({mensaje: error.mensaje})         
+    }
+};
+
+exports.totalbalance = async (request, response) => {
+    const { id } = request.params;
+
+    try {
+        // Encuentra todas las cuentas asociadas al perfil con el id proporcionado
+        const accounts = await Account.findAll({
+            attributes: ['balance'], // Solo necesitamos el atributo 'balance' de las cuentas
+            where: {
+                profile_id: id
+            }
+        });
+
+        if (accounts.length === 0) {
+            return response.status(404).json({ message: 'No se encontraron cuentas asociadas a este perfil.' });
+        }
+
+        // Calcula la suma total del dinero en todas las cuentas
+        const totalBalance = accounts.reduce((acc, curr) => acc + parseFloat(curr.balance), 0);
+
+        return response.status(200).json({ totalBalance });
+
+    } catch (error) {
+        return response.status(500).json({mensaje: error.mensaje})         
+}
+};

@@ -385,3 +385,91 @@ exports.delete = async (request, response)=>{
     }
 }
 
+
+// -----------------------------------------------------------------------------------------------------
+
+exports.operation = async (request, response)=>{
+    const {amount, sender_name, recipient_name} = request.body;
+
+    const schema = Joi.object({
+        SchemaAmount: Joi.number().required().messages({ 'any.required': "El campo amount es obligatorio" }),
+        SchemaSender_name: Joi.string().required().messages({'any.required': "El campo sender_name es obligatorio"}),
+        SchemaRecipient_name: Joi.string().required().messages({'any.required': "El campo recipient_name es obligatorio"})
+    });
+
+    const { error, value } = schema.validate({
+        SchemaAmount: amount,
+        SchemaSender_name: sender_name,
+        SchemaRecipient_name: recipient_name
+    });
+
+    if(error){
+        return response.status(400).json({mensaje: error.details[0].message})        
+    }  
+
+    try {
+        let accountSender = await Account.findOne({
+            raw:true,
+            where:
+                {
+                    'name':sender_name
+                }
+        });     
+            
+        if(!accountSender){
+            return response.status(404).json({mensaje: "No Tienes una cuenta con este nombre"})                 
+        }
+    
+        let accountRecipient = await Account.findOne({
+            raw:true,
+            where:
+                {
+                    'name':recipient_name
+                }
+        });     
+            
+        if(!accountRecipient){
+            return response.status(404).json({mensaje: "No existe una cuenta con este nombre"})                 
+        }
+    
+        if(amount > accountSender.balance){
+            return response.status(404).json({mensaje: "La cantidad de dinero que has seleccionado es mayor a la que actualmente tiene tu cuenta"}) 
+        }
+
+        let balanceSender = accountSender.balance - amount
+        let balanceRecipient = accountRecipient.balance + amount
+
+        
+        await Account.update(
+            {
+                balance:balanceSender,
+            },
+            {
+                where: 
+                    {
+                        'name': sender_name
+                    }
+            }
+        );      
+        
+        await Account.update(
+            {
+                balance:balanceRecipient,
+            },
+            {
+                where: 
+                    {
+                        'name': recipient_name
+                    }
+            }
+        );
+    
+            return response.status(201).json({mensaje: "Se ha modificado el registro exitosamente"});
+
+        } catch (error) {
+            return response.status(500).json({mensaje: error.mensaje})                          
+        }
+
+
+
+}
